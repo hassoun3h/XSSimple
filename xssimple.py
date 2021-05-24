@@ -62,7 +62,7 @@ def submit_forms(form_details, url, value):
             data[input_name] = input_value
     
     if form_details['method'] == 'post':
-        return requests.post(target_url. data==data)
+        return requests.post(target_url, data==data)
     elif form_details['method'] == 'get':
         return requests.get(target_url, params=data)
 
