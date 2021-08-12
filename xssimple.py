@@ -34,16 +34,8 @@ def get_form_details(form):
     details['inputs'] = inputs
 
     return details
-
+# Submitting forms given in `form_details`
 def submit_forms(form_details, url, value):
-    """
-    Submits a form given in `form_details`
-    Params:
-        form_details (list): a dictionary that contain form information
-        url (str): the original URL that contain that form
-        value (str): this will be replaced to all text and search inputs
-    Returns the HTTP Response after form submission
-    """
 
     # Construct the full url if the url provided in action is relative
     target_url = urljoin(url, form_details['action'])
@@ -57,8 +49,8 @@ def submit_forms(form_details, url, value):
             input['value'] = 'value'
         input_name = input.get('name')
         input_value = input.get('value')
+        
         if input_name and input_value:
-            # If input name and value are not None, add them to the data of form submission
             data[input_name] = input_value
     
     if form_details['method'] == 'post':
@@ -75,22 +67,22 @@ def xss_scan(url):
     # Get all the forms from the url
     forms = get_forms(url)
     print(f'[+] Detected {len(forms)} forms on {url}')
-    js_script = '<script>alert("pwn")</script>'
+    pwn_script = '<script>alert("pwn")</script>'
 
     # Returning value
-    is_vuln = False
+    vuln = False
 
     # Iterate over all forms
     for form in forms:
         form_details = get_form_details(form)
-        content = submit_forms(form_details, url, js_script).content.decode()
-        if js_script in content:
+        content = submit_forms(form_details, url, pwn_script).content.decode()
+        if pwn_script in content:
             print(f'[+] XSS detectedon {url}')
             print(f'[*] Form details: ')
             pprint(form_details)
-            is_vuln = True
+            vuln = True
     
-    return is_vuln
+    return vuln
 
 
 if __name__ == '__main__':
